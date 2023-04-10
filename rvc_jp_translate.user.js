@@ -15,10 +15,13 @@
     }
 
     function dumpText() {
-        var texts = {};
+        var texts = jpDict;
         var elementList = document.querySelector('gradio-app').shadowRoot.querySelectorAll("p,span,button");
         elementList.forEach(function (itm) {
-            texts[itm.innerHTML] = "";
+            var txt = itm.innerHTML;
+            if (!(txt in jpDict)) {
+                texts[txt] = "";
+            }
         });
         let write_json = JSON.stringify(texts);
         console.log(write_json);
@@ -39,6 +42,7 @@
     }
 
     const observer = new MutationObserver(records => {
+        //dumpText();
         replaceText();
     });
     const options = {
