@@ -5,6 +5,7 @@
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
+// @match        https://*.gradio.live/
 // @run-at       document-end
 // @grant GM_setValue
 // @grant GM_getValue
