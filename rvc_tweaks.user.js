@@ -24,7 +24,14 @@
         }
         return null;
     }
+    function getRangeInputForNumInput(elm) {
+        var nm = elm.parentNode.parentNode.nextElementSibling;
+        if (nm != null && nm.type == "range") {
+            return nm;
+        }
 
+        return null;
+    }
     function setup() {
         if (inited){
             return;
@@ -50,6 +57,7 @@
             elementList = document.querySelector('gradio-app').shadowRoot.querySelectorAll("span");
             elementList.forEach(function (itm) {
                 var numInput = getNumInputForSpan(itm, 'save_every_epoch');
+                var rangeInput;
                 if (numInput != null){
                     var save_every_epoch=GM_getValue("save_every_epoch");
                     if (!Number.isNaN(parseInt(save_every_epoch))){
@@ -58,6 +66,10 @@
                     numInput.addEventListener('change', function (evt) {
                         GM_setValue("save_every_epoch", evt.target.value);
                     });
+                    rangeInput = getRangeInputForNumInput(numInput);
+                    if (rangeInput != null) {
+                        rangeInput.value = save_every_epoch;
+                    }
                 }
 
                 numInput = getNumInputForSpan(itm, 'total_epoch');
@@ -69,6 +81,10 @@
                     numInput.addEventListener('change', function (evt) {
                         GM_setValue("total_epoch", evt.target.value);
                     });
+                    rangeInput = getRangeInputForNumInput(numInput);
+                    if (rangeInput != null) {
+                        rangeInput.value = total_epoch;
+                    }
                 }
 
                 numInput = getNumInputForSpan(itm, 'batch_size');
@@ -80,6 +96,10 @@
                     numInput.addEventListener('change', function (evt) {
                         GM_setValue("batch_size", evt.target.value);
                     });
+                    rangeInput = getRangeInputForNumInput(numInput);
+                    if (rangeInput != null) {
+                        rangeInput.value = batch_size;
+                    }
                 }
 
             });
