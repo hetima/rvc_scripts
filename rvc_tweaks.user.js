@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -10,6 +10,9 @@
 // @grant GM_setValue
 // @grant GM_getValue
 // ==/UserScript==
+
+
+// 0.1.2 save_every_epoch、total_epoch、batch_sizeの保存値をスライダーにも反映
 
 (function () {
     'use strict';
