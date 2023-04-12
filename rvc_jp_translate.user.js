@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_jp_translate
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  インターフェイスを日本語化
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -9,6 +9,8 @@
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
+
+// 0.1.3 起動処理改善
 
 (function () {
     'use strict';
@@ -50,13 +52,29 @@
         childList: true,
         subtree: true
     };
-    observer.observe(document.querySelector('gradio-app').shadowRoot, options);
-    setup();
-    setTimeout(function () {
-        //時間がたったら監視停止
-        //observer.disconnect();
-        //しないでずっと動かす。タブの切替でタブタイトルが変更されてしまうので
-    }, 6000);
+    const shadowRoot = document.querySelector('gradio-app').shadowRoot
+    if (shadowRoot == undefined) {
+        console.log("shadowRoot is undefined");
+        setTimeout(function () {
+            replaceText();
+            observer.observe(document.querySelector('gradio-app').shadowRoot, options);
+        }, 2000);
+    } else {
+        observer.observe(document.querySelector('gradio-app').shadowRoot, options);
+        setTimeout(function () {
+            //時間がたったら監視停止
+            //observer.disconnect();
+            //しないでずっと動かす。タブの切替でタブタイトルが変更されてしまうので
+        }, 8000);
+    }
+
+
+
+    // observer.observe(document.querySelector('gradio-app').shadowRoot, options);
+    // setup();
+    // setTimeout(function () {
+    //     //時間がたったら監視停止
+    // }, 6000);
 
    
     // "是" "否" は動作に影響するので翻訳しない
