@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.2.0
+// @version      0.2.1
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -9,6 +9,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.2.1 特徴量ファイルパスの共用名を「モデル名_数字」に変更
 // 0.2.0 特徴量ファイルパスの自動設定を追加
 // 0.1.3 save_every_epoch、total_epoch、batch_sizeの保存対応停止
 // 0.1.2 save_every_epoch、total_epoch、batch_sizeの保存値をスライダーにも反映
@@ -146,7 +147,7 @@
 
         //設定UIを追加
         const view = addViewToTab(0, "rvc_tweaks");
-        const tPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が数字で終わる場合は数字を除いた名前にしてください(xxx100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
+        const tPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が_+数字で終わる場合は数字を除いた名前にしてください(xxx_100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
         tPathTextarea.value = localStorage.getItem("rvc_tweaks_t_path");
         tPathTextarea.addEventListener('change', function (evt) {
             localStorage.setItem("rvc_tweaks_t_path", evt.target.value);
@@ -175,7 +176,7 @@
                 }
                 if (evt.target.value.lastIndexOf(".")>0){
                     //拡張子と末尾の数字を除去
-                    let result = evt.target.value.substring(0, evt.target.value.lastIndexOf(".")).replace(/\d+$/, "");
+                    let result = evt.target.value.substring(0, evt.target.value.lastIndexOf(".")).replace(/_\d+$/, "");
                     let addIndexPath = tPath + "\\" + result + ".index";
                     let totalFeaPath = tPath + "\\" + result + ".npy";
                     addedIndexTextareas.forEach((element) => { 
