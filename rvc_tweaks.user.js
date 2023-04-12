@@ -147,7 +147,7 @@
 
         //設定UIを追加
         const view = addViewToTab(0, "rvc_tweaks");
-        const tPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が_+数字で終わる場合は数字を除いた名前にしてください(xxx_100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
+        const tPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が_+数字で終わる場合は_+数字を除いた名前にしてください(xxx_100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
         tPathTextarea.value = localStorage.getItem("rvc_tweaks_t_path");
         tPathTextarea.addEventListener('change', function (evt) {
             localStorage.setItem("rvc_tweaks_t_path", evt.target.value);
