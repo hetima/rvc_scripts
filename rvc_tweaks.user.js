@@ -5,6 +5,7 @@
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
+// @match        http://localhost:7860/
 // @match        https://*.gradio.live/
 // @run-at       document-end
 // ==/UserScript==
@@ -39,7 +40,14 @@
         if (inited){
             return;
         }
-        var elementList = document.querySelector('gradio-app').shadowRoot.querySelectorAll("textarea");
+        if (gAppRoot == null) {
+            gAppRoot = document.querySelector('gradio-app').shadowRoot;
+            if (gAppRoot == null) {
+                gAppRoot = document.querySelector('gradio-app');
+            }
+        }
+
+        var elementList = gAppRoot.querySelectorAll("textarea");
         if (elementList.length > 0) {
             console.log("rvc_tweaks inited");
             inited = true;
@@ -50,9 +58,11 @@
                 itm.addEventListener('keyup', function (evt) {
                     var tgt = evt.target;
                     var txt = tgt.value;
-                    var char = txt.slice(0, 1);
-                    if (char == '"' && char == txt.slice(-1)) {
-                        tgt.value = txt.slice(1, -1);
+                    if (txt.length > 8 ) {
+                        var char = txt.slice(0, 1);
+                        if (char == '"' && char == txt.slice(-1)) {
+                            tgt.value = txt.slice(1, -1);
+                        }
                     }
                 });
             });
@@ -68,7 +78,7 @@
     function setupTrainCount() {
 
         //トレーニング設定保存
-        const elementList = document.querySelector('gradio-app').shadowRoot.querySelectorAll("span");
+        const elementList = gAppRoot.querySelectorAll("span");
         elementList.forEach(function (itm) {
             var numInput = getNumInputForSpan(itm, 'save_every_epoch');
             var rangeInput;
@@ -126,9 +136,9 @@
     const addedIndexTextareas = new Array();
     const totalFeaTextareas = new Array();
     function setupTPath(){
-        
+
         //textareaを探す
-        var elementList = document.querySelector('gradio-app').shadowRoot.querySelectorAll("textarea");
+        var elementList = gAppRoot.querySelectorAll("textarea");
         var textareaCount = 0;
         if (elementList.length > 0) {
             elementList.forEach(function (itm) {
@@ -163,10 +173,13 @@
         });
 
         //モデル選択したらパスを更新
-        const slct = document.querySelector('gradio-app').shadowRoot.querySelector(".tabitem>div>div>div>div>label>select");
+        const slct = gAppRoot.querySelector(".tabitem>div>div>div>div>label>select");
+        // if(slct==null){
+        //     slct = gAppRoot.querySelector(".single-select"); //span
+        // }
         if(slct){
             slct.addEventListener('change', function (evt) {
-
+                // console.log("model selection changed");
                 let tPath = localStorage.getItem("rvc_tweaks_t_path");
                 if(tPath.length <= 0){
                     return;
@@ -205,14 +218,14 @@
         subtree: true
     };
 
-    const shadowRoot = document.querySelector('gradio-app').shadowRoot
-    if (shadowRoot == undefined){
+    let gAppRoot = document.querySelector('gradio-app').shadowRoot;
+    if (gAppRoot == undefined){
         console.log("shadowRoot is undefined");
         setTimeout(function () {
             setup();
         }, 1500);
     }else{
-        observer.observe(document.querySelector('gradio-app').shadowRoot, options);
+        observer.observe(gAppRoot, options);
         setTimeout(function () {
             //時間がたったら監視停止
             observer.disconnect();
@@ -220,7 +233,7 @@
     }
 
     function addViewToTab(index, title){
-        const elementList = document.querySelector('gradio-app').shadowRoot.querySelectorAll(".tabitem");
+        const elementList = gAppRoot.querySelectorAll(".tabitem");
         if (elementList.length > index) {
             const tab = elementList[index].childNodes[0];
             const view = document.createElement('div');
