@@ -152,26 +152,30 @@
                 }
             });
         }
+
         if (textareaCount < 4){
             elementList = gAppRoot.querySelectorAll("span");
             textareaCount = 0;
             if (elementList.length > 0) {
                 elementList.forEach(function (itm) {
+                    var t;
                     if (itm.innerHTML == "Feature Retrieval Library") {
-                        var t = itm.nextElementSibling;
+                        t = itm.nextElementSibling;
                         if(t.type=="textarea"){
                             addedIndexTextareas.push(t);
                             textareaCount++;
                         }
                     } else if (itm.innerHTML == "Feature File Path") {
-                        var t = itm.nextElementSibling;
+                        t = itm.nextElementSibling;
                         if (t.type == "textarea") {
                             totalFeaTextareas.push(t);
                             textareaCount++;
                         }
                     }
                 });
-            }        }
+            }
+        }
+
         if (textareaCount < 2) {
             return;
         }
@@ -202,8 +206,7 @@
             slct.addEventListener('change', function (evt) {
                 updateTPath(evt.target.value);
             });
-        }
-        if (slct && slct.tagName == "SPAN") {
+        } else if (slct && slct.tagName == "SPAN") {
             if (slct.textContent != ""){
                 updateTPath(slct.textContent);
             }
