@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -10,7 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
-// 0.2.2 ddPn08/rvc-webui にちょっと対応
+// 0.2.3 ddPn08/rvc-webui にちょっと対応
 // 0.2.1 特徴量ファイルパスの共用名を「モデル名_数字」に変更
 // 0.2.0 特徴量ファイルパスの自動設定を追加
 // 0.1.3 save_every_epoch、total_epoch、batch_sizeの保存対応停止
@@ -204,6 +204,9 @@
             });
         }
         if (slct && slct.tagName == "SPAN") {
+            if (slct.textContent != ""){
+                updateTPath(slct.textContent);
+            }
             const observer2 = new MutationObserver(records => {
                 const newName = records[0].target.textContent;
                 console.log(newName + " was selected");
@@ -215,6 +218,7 @@
                 characterData: true
             };
             observer2.observe(slct, options);
+
         }
     }
     function updateTPath(modelName) {
