@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.2.2 ddPn08/rvc-webui にちょっと対応
 // 0.2.1 特徴量ファイルパスの共用名を「モデル名_数字」に変更
 // 0.2.0 特徴量ファイルパスの自動設定を追加
 // 0.1.3 save_every_epoch、total_epoch、batch_sizeの保存対応停止
@@ -152,10 +153,30 @@
             });
         }
         if (textareaCount < 4){
+            elementList = gAppRoot.querySelectorAll("span");
+            textareaCount = 0;
+            if (elementList.length > 0) {
+                elementList.forEach(function (itm) {
+                    if (itm.innerHTML == "Feature Retrieval Library") {
+                        var t = itm.nextElementSibling;
+                        if(t.type=="textarea"){
+                            addedIndexTextareas.push(t);
+                            textareaCount++;
+                        }
+                    } else if (itm.innerHTML == "Feature File Path") {
+                        var t = itm.nextElementSibling;
+                        if (t.type == "textarea") {
+                            totalFeaTextareas.push(t);
+                            textareaCount++;
+                        }
+                    }
+                });
+            }        }
+        if (textareaCount < 2) {
             return;
         }
-
-        //設定UIを追加
+        // console.log("textareaCount=" + textareaCount);
+        // 設定UIを追加
         const view = addViewToTab(0, "rvc_tweaks");
         const tPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が_+数字で終わる場合は_+数字を除いた名前にしてください(xxx_100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
         tPathTextarea.value = localStorage.getItem("rvc_tweaks_t_path");
@@ -173,40 +194,56 @@
         });
 
         //モデル選択したらパスを更新
-        const slct = gAppRoot.querySelector(".tabitem>div>div>div>div>label>select");
-        // if(slct==null){
-        //     slct = gAppRoot.querySelector(".single-select"); //span
-        // }
-        if(slct){
+        let slct = gAppRoot.querySelector(".tabitem>div>div>div>div>label>select");
+        if(slct==null){
+            slct = gAppRoot.querySelector(".single-select"); //span
+        }
+        if (slct && slct.type =="select-one"){
             slct.addEventListener('change', function (evt) {
-                // console.log("model selection changed");
-                let tPath = localStorage.getItem("rvc_tweaks_t_path");
-                if(tPath.length <= 0){
-                    return;
-                }
-                if (tPath.slice(-1) == "\\"){
-                    tPath = tPath.slice(0, -1);
-                }
-                if (evt.target.value.lastIndexOf(".")>0){
-                    //拡張子と末尾の数字を除去
-                    let result = evt.target.value.substring(0, evt.target.value.lastIndexOf(".")).replace(/_\d+$/, "");
-                    let addIndexPath = tPath + "\\" + result + ".index";
-                    let totalFeaPath = tPath + "\\" + result + ".npy";
-                    addedIndexTextareas.forEach((element) => { 
-                        element.value = addIndexPath;
-                        //Gradioに変更したことを認識させる
-                        element.dispatchEvent(new Event("input"));
-                    });
-                    totalFeaTextareas.forEach((element) => {
-                        element.value = totalFeaPath;
-                        //Gradioに変更したことを認識させる
-                        element.dispatchEvent(new Event("input"));
-                    });
-                }
+                updateTPath(evt.target.value);
             });
         }
-
+        if (slct && slct.tagName == "SPAN") {
+            const observer2 = new MutationObserver(records => {
+                const newName = records[0].target.textContent;
+                console.log(newName + " was selected");
+                updateTPath(newName);
+            });
+            const options = {
+                childList: true,
+                subtree: true,
+                characterData: true
+            };
+            observer2.observe(slct, options);
+        }
     }
+    function updateTPath(modelName) {
+        // console.log("model selection changed");
+        let tPath = localStorage.getItem("rvc_tweaks_t_path");
+        if (tPath.length <= 0) {
+            return;
+        }
+        if (tPath.slice(-1) == "\\") {
+            tPath = tPath.slice(0, -1);
+        }
+        if (modelName.lastIndexOf(".") > 0) {
+            //拡張子と末尾の数字を除去
+            let result = modelName.substring(0, modelName.lastIndexOf(".")).replace(/_\d+$/, "");
+            let addIndexPath = tPath + "\\" + result + ".index";
+            let totalFeaPath = tPath + "\\" + result + ".npy";
+            addedIndexTextareas.forEach((element) => {
+                element.value = addIndexPath;
+                //Gradioに変更したことを認識させる
+                element.dispatchEvent(new Event("input"));
+            });
+            totalFeaTextareas.forEach((element) => {
+                element.value = totalFeaPath;
+                //Gradioに変更したことを認識させる
+                element.dispatchEvent(new Event("input"));
+            });
+        }
+    }
+
 
 
 
@@ -223,7 +260,7 @@
         console.log("shadowRoot is undefined");
         setTimeout(function () {
             setup();
-        }, 1500);
+        }, 1200);
     }else{
         observer.observe(gAppRoot, options);
         setTimeout(function () {
@@ -251,7 +288,7 @@
         //pane.classList.add("gr-form", "overflow-hidden", "flex", "border-solid", "border", "bg-gray-200", "dark:bg-gray-700", "gap-px", "rounded-lg", "flex-wrap");
         const textarea = document.createElement('textarea');
         textarea.classList.add("scroll-hide", "block", "gr-box", "gr-input", "w-full", "gr-text-input")
-        //textarea.style = "overflow-y: scroll; height: 42px;";
+        textarea.style = "overflow-y: scroll; height: 42px; width:100%";
 
         const label = document.createElement('div');
         label.innerHTML = "<span class=\"text-gray-500 text-[0.855rem]\">" + title + "</span>";
