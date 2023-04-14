@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.2.4
+// @version      0.3.0
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.3.0 最近使った音源
 // 0.2.4 ddPn08/rvc-webui でのバグ修正
 // 0.2.3 ddPn08/rvc-webui にちょっと対応
 // 0.2.1 特徴量ファイルパスの共用名を「モデル名_数字」に変更
@@ -73,6 +74,7 @@
             setupTPath();
             //動くようになったけどローカライズの種類に依存するので
             // setupTrainCount();
+            setupRecentsSelect();
         }
 
     }
@@ -250,6 +252,113 @@
                 element.dispatchEvent(new Event("input"));
             });
         }
+    }
+
+    //最近使った音源
+    const gRecentSelect = document.createElement('select');
+    let gWavTextarea;
+    let gRecentSelectsArray = new Array();
+    gRecentSelect.style = "width:20px;border-width:0px;padding:2px 22px;";
+    function setupRecentsSelect(){
+        const tab = gAppRoot.querySelector(".tabitem"); //最初のタブだけ
+        if (tab == null) {
+            return;
+        }
+        var elementList = tab.querySelectorAll("span");
+        gWavTextarea = null;
+        if (elementList.length > 0) {
+            elementList.forEach(function (itm) {
+                if (itm.innerText == "Source Audio" || itm.innerText == "変換元のファイルパス" || itm.innerText == "输入待处理音频文件路径(默认是正确格式示例)") {
+                    if (itm.nextElementSibling.type =="textarea"){
+                        gWavTextarea = itm.nextElementSibling;
+                    }
+                    return;
+                }
+            });
+        }
+        if (gWavTextarea == null) {
+            return;
+        }
+        elementList = tab.querySelectorAll("button");
+        var InferBtn = null;
+        if (elementList.length > 0) {
+            elementList.forEach(function (itm) {
+                if (itm.innerText == "Infer") {
+                    InferBtn = itm;
+                    return;
+                }
+            });
+        }
+        if (InferBtn == null) {
+            InferBtn = gWavTextarea.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector("button");
+            if (InferBtn == null) {
+                return;
+            }
+        }
+        
+        InferBtn.addEventListener('click', function (evt) {
+            inferBtnClicked();
+        });
+
+        let recents = localStorage.getItem("rvc_tweaks_recents");
+        if (recents && recents.length > 0){
+            gRecentSelectsArray = JSON.parse(recents);
+        }
+
+        const view = document.createElement('span');
+        view.style = "width:20px;";
+        // gRecentSelect.innerHTML ='<option value = "">No History</option>';
+        updateRecentSelect();
+        gWavTextarea.parentNode.insertBefore(gRecentSelect, gWavTextarea);
+
+        gRecentSelect.addEventListener('change', function (evt) {
+            let val = evt.target.value;
+            if(val == "x"){
+                gRecentSelectsArray = new Array();
+                let json = JSON.stringify(gRecentSelectsArray, undefined, 1);
+                localStorage.setItem("rvc_tweaks_recents", json);
+                updateRecentSelect();
+            }else if(val && val.length>0){
+                gWavTextarea.value = val;
+                //Gradioに変更したことを認識させる
+                gWavTextarea.dispatchEvent(new Event("input"));
+            }
+            gRecentSelect.selectedIndex = -1;
+        });
+    }
+    function inferBtnClicked(){
+        let wavPath = gWavTextarea.value;
+        addRecentSelect(wavPath);
+    }
+    function addRecentSelect(newPath){
+        if (!newPath || newPath.length <= 0){
+            return;
+        }
+        if (gRecentSelectsArray.includes(newPath)) {
+            gRecentSelectsArray.splice(gRecentSelectsArray.indexOf(newPath), 1);
+        }
+        gRecentSelectsArray.unshift(newPath);
+        if (gRecentSelectsArray.length > 8){
+            gRecentSelectsArray.pop();
+        }
+        let json = JSON.stringify(gRecentSelectsArray, undefined, 1);
+        localStorage.setItem("rvc_tweaks_recents", json);
+        updateRecentSelect();
+       
+    }
+    function updateRecentSelect() {
+        gRecentSelect.replaceChildren();
+        gRecentSelectsArray.forEach(function (itm) {
+            var option = document.createElement("option");
+            option.text = itm;
+            option.value = itm;
+            gRecentSelect.appendChild(option);
+        });
+        var option = document.createElement("option");
+        option.text = gRecentSelectsArray.length > 0 ? "Clear History" : "No History";
+        option.value = "x";
+        gRecentSelect.appendChild(option);
+        gRecentSelect.selectedIndex = -1;
     }
 
 
