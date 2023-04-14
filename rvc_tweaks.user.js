@@ -227,7 +227,7 @@
     function updateTPath(modelName) {
         // console.log("model selection changed");
         let tPath = localStorage.getItem("rvc_tweaks_t_path");
-        if (tPath.length <= 0) {
+        if (!tPath || tPath.length <= 0) {
             return;
         }
         if (tPath.slice(-1) == "\\") {
