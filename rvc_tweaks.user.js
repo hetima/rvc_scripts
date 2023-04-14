@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.2.4 ddPn08/rvc-webui でのバグ修正
 // 0.2.3 ddPn08/rvc-webui にちょっと対応
 // 0.2.1 特徴量ファイルパスの共用名を「モデル名_数字」に変更
 // 0.2.0 特徴量ファイルパスの自動設定を追加
@@ -294,7 +295,7 @@
         //pane.classList.add("flex","row", "w-full", "flex-wrap", "gap-4");
         //pane.classList.add("gr-form", "overflow-hidden", "flex", "border-solid", "border", "bg-gray-200", "dark:bg-gray-700", "gap-px", "rounded-lg", "flex-wrap");
         const textarea = document.createElement('textarea');
-        textarea.classList.add("scroll-hide", "block", "gr-box", "gr-input", "w-full", "gr-text-input")
+        textarea.classList.add("scroll-hide", "block", "gr-box", "gr-input", "w-full", "gr-text-input", "svelte-4xt1ch")
         textarea.style = "overflow-y: scroll; height: 42px; width:100%";
 
         const label = document.createElement('div');
