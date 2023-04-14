@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.3.0
+// @version      0.3.1
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1:7865/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.3.1 "取る処理の修正
 // 0.3.0 最近使った音源
 // 0.2.4 ddPn08/rvc-webui でのバグ修正
 // 0.2.3 ddPn08/rvc-webui にちょっと対応
@@ -65,6 +66,8 @@
                         var char = txt.slice(0, 1);
                         if (char == '"' && char == txt.slice(-1)) {
                             tgt.value = txt.slice(1, -1);
+                            //Gradioに変更したことを認識させる
+                            tgt.dispatchEvent(new Event("input"));
                         }
                     }
                 });
@@ -295,7 +298,7 @@
                 return;
             }
         }
-        
+
         InferBtn.addEventListener('click', function (evt) {
             inferBtnClicked();
         });
