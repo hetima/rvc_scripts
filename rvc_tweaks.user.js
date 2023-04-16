@@ -1,15 +1,16 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.3.2
 // @description  rvc_tweaks
 // @author       hetima
-// @match        http://127.0.0.1:7865/
-// @match        http://localhost:7860/
+// @match        http://127.0.0.1/
+// @match        http://localhost/
 // @match        https://*.gradio.live/
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.3.2 最新のddPn08/rvc-webui対応
 // 0.3.1 "取る処理の修正
 // 0.3.0 最近使った音源
 // 0.2.4 ddPn08/rvc-webui でのバグ修正
@@ -165,13 +166,13 @@
             if (elementList.length > 0) {
                 elementList.forEach(function (itm) {
                     var t;
-                    if (itm.innerHTML == "Feature Retrieval Library") {
+                    if (itm.innerHTML == "Feature Retrieval Library" || itm.innerHTML == "Faiss Index File Path") {
                         t = itm.nextElementSibling;
                         if(t.type=="textarea"){
                             addedIndexTextareas.push(t);
                             textareaCount++;
                         }
-                    } else if (itm.innerHTML == "Feature File Path") {
+                    } else if (itm.innerHTML == "Feature File Path" || itm.innerHTML == "Big NPY File Path") {
                         t = itm.nextElementSibling;
                         if (t.type == "textarea") {
                             totalFeaTextareas.push(t);
@@ -187,7 +188,7 @@
         }
         // console.log("textareaCount=" + textareaCount);
         // 設定UIを追加
-        const view = addViewToTab(0, "rvc_tweaks");
+        const view = addViewToTab(0, "rvc_tweaks 設定");
         const tPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が_+数字で終わる場合は_+数字を除いた名前にしてください(xxx_100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
         tPathTextarea.value = localStorage.getItem("rvc_tweaks_t_path");
         tPathTextarea.addEventListener('change', function (evt) {
