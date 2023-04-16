@@ -2,9 +2,9 @@
 
 RVC(Retrieval-based-Voice-Conversion)のWebUIを日本語ローカライズするTampermonkeyスクリプトです。RVC本体ファイルには手を加えずにローカライズします。
 
-Tampermonkey機能拡張を使用している状態で [rvc_jp_translate.user.js](https://github.com/hetima/rvc_jp_translate/raw/main/rvc_jp_translate.user.js) を開くとインストールできます。
+**20230416updated 以降を適用している場合、標準でローカライズされるのでこのスクリプトは不要です。**
 
-RVCがバージョンアップするとローカライズ漏れするところが出てくると思われますが、少なくともそのまま動作はするはずです。
+Tampermonkey機能拡張を使用している状態で [rvc_jp_translate.user.js](https://github.com/hetima/rvc_jp_translate/raw/main/rvc_jp_translate.user.js) を開くとインストールできます。
 
 
 # rvc_tweaks
