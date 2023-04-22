@@ -242,11 +242,14 @@
         if (iPath.slice(-1) == "\\") {
             iPath = iPath.slice(0, -1);
         }
-        if (modelName.lastIndexOf(".") > 0) {
-            //拡張子と末尾の数字を除去
-            let result = modelName.substring(0, modelName.lastIndexOf(".")).replace(/_\d+$/, "");
-            let addIndexPath = iPath + "\\" + result + ".index";
-            let totalFeaPath = iPath + "\\" + result + ".npy";
+        //拡張子と末尾の数字を除去
+        if (modelName.lastIndexOf(".pth") > 0) {
+            modelName = modelName.substring(0, modelName.lastIndexOf(".pth"));
+        }
+        modelName = modelName.replace(/_\d+$/, "");
+        if (modelName.length > 0) {
+            let addIndexPath = iPath + "\\" + modelName + ".index";
+            let totalFeaPath = iPath + "\\" + modelName + ".npy";
             addedIndexTextareas.forEach((element) => {
                 element.value = addIndexPath;
                 //Gradioに変更したことを認識させる
