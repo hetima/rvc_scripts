@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.3.3
+// @version      0.4.0
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.4.0 特徴量ファイルの手動選択
 // 0.3.3 RVC20230416対応
 // 0.3.2 最新のddPn08/rvc-webui対応
 // 0.3.1 "取る処理の修正
@@ -234,29 +235,48 @@
             observer2.observe(slct, options);
 
         }
-        // manual index select
-        // updateIndexSelect();
-        // gIndexSelect.addEventListener('change', function (evt) {
-        //     let val = evt.target.value;
-        //     if (val == "") {
-        //         updateIndexSelect();
-        //     } else if (val && val.length > 0) {
-        //         updateIndexPath(val);
-        //     }
-        //     gIndexSelect.selectedIndex = -1;
-        // });
-        // addedIndexTextareas[0].parentNode.insertBefore(gIndexSelect, addedIndexTextareas[0]);
+        //manual index select
+        updateIndexSelect();
+        gIndexSelect.addEventListener('change', function (evt) {
+            let val = evt.target.value;
+            if (val == "") {
+                updateIndexSelect();
+            } else if (val && val.length > 0) {
+                updateIndexPath(val);
+            }
+            gIndexSelect.selectedIndex = -1;
+        });
+        addedIndexTextareas[0].parentNode.insertBefore(gIndexSelect, addedIndexTextareas[0]);
     }
     function updateIndexSelect(){
         gIndexSelect.replaceChildren();
+        if (unsafeWindow.gradio_config == undefined){
+            return;
+        }
+        const components = unsafeWindow.gradio_config.components;
+        let indexNames = new Array();
+        components.forEach(element => {
+            if (element.type == "dropdown" && (element.props.label == "Model" || element.props.label == "音源推論")){
+                const choices = element.props.choices;
+                if (choices != undefined){
+                    choices.forEach(choice => {
+                        choice = indexNameFromModelName(choice);
+                        if (choice.length > 0 && !indexNames.includes(choice)){
+                            indexNames.push(choice);
+                        }
+                    });
+                }
+            }
+        });
+        indexNames.forEach(indexName => {
+            var opt = document.createElement("option");
+            opt.text = indexName;
+            opt.value = indexName;
+            gIndexSelect.appendChild(opt);              
+        });
 
         var option = document.createElement("option");
-        option.text = "test";
-        option.value = "test";
-        gIndexSelect.appendChild(option);
-
-        var option = document.createElement("option");
-        option.text = "Reload";
+        option.text = "[Reload]";
         option.value = "";
         gIndexSelect.appendChild(option);
         gIndexSelect.selectedIndex = -1;
