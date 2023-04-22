@@ -76,7 +76,7 @@
             });
 
 
-            setupTPath();
+            setupIndexPath();
             //動くようになったけどローカライズの種類に依存するので
             // setupTrainCount();
             setupRecentsSelect();
@@ -144,9 +144,10 @@
     //特徴量ファイルパス
     const addedIndexTextareas = new Array();
     const totalFeaTextareas = new Array();
-    function setupTPath(){
+    function setupIndexPath(){
 
         //textareaを探す
+        //RVC
         var elementList = gAppRoot.querySelectorAll("textarea");
         var textareaCount = 0;
         if (elementList.length > 0) {
@@ -160,7 +161,7 @@
                 }
             });
         }
-
+        //rvc-webui
         if (textareaCount < 4){
             elementList = gAppRoot.querySelectorAll("span");
             textareaCount = 0;
@@ -190,12 +191,12 @@
         // console.log("textareaCount=" + textareaCount);
         // 設定UIを追加
         const view = addViewToTab(0, "rvc_tweaks 設定");
-        const tPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が_+数字で終わる場合は_+数字を除いた名前にしてください(xxx_100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
-        tPathTextarea.value = localStorage.getItem("rvc_tweaks_t_path");
-        tPathTextarea.addEventListener('change', function (evt) {
+        const iPathTextarea = addTextareaToView(view, "特徴量検索用ファイルパス（added_XXXX.index）と特徴量ファイルパス（total_fea.npy）を自動設定するためのフォルダパス（例：D:\\RVC-beta\\weights\\subdata）<br>このフォルダの中に「モデル名.index」「モデル名.npy」とリネームして配置してください。ただし、モデル名が_+数字で終わる場合は_+数字を除いた名前にしてください(xxx_100→xxx)<br>ファイルが存在するかどうかはチェックせず強制的に設定変更するのでご注意ください。");
+        iPathTextarea.value = localStorage.getItem("rvc_tweaks_t_path");
+        iPathTextarea.addEventListener('change', function (evt) {
             localStorage.setItem("rvc_tweaks_t_path", evt.target.value);
         });
-        tPathTextarea.addEventListener('keyup', function (evt) {
+        iPathTextarea.addEventListener('keyup', function (evt) {
             var tgt = evt.target;
             var txt = tgt.value;
             var char = txt.slice(0, 1);
@@ -212,16 +213,16 @@
         }
         if (slct && slct.type =="select-one"){
             slct.addEventListener('change', function (evt) {
-                updateTPath(evt.target.value);
+                updateIndexPath(evt.target.value);
             });
         } else if (slct && slct.tagName == "SPAN") {
             if (slct.textContent != ""){
-                updateTPath(slct.textContent);
+                updateIndexPath(slct.textContent);
             }
             const observer2 = new MutationObserver(records => {
                 const newName = records[0].target.textContent;
                 console.log(newName + " was selected");
-                updateTPath(newName);
+                updateIndexPath(newName);
             });
             const options = {
                 childList: true,
@@ -232,20 +233,20 @@
 
         }
     }
-    function updateTPath(modelName) {
+    function updateIndexPath(modelName) {
         // console.log("model selection changed");
-        let tPath = localStorage.getItem("rvc_tweaks_t_path");
-        if (!tPath || tPath.length <= 0) {
+        let iPath = localStorage.getItem("rvc_tweaks_t_path");
+        if (!iPath || iPath.length <= 0) {
             return;
         }
-        if (tPath.slice(-1) == "\\") {
-            tPath = tPath.slice(0, -1);
+        if (iPath.slice(-1) == "\\") {
+            iPath = iPath.slice(0, -1);
         }
         if (modelName.lastIndexOf(".") > 0) {
             //拡張子と末尾の数字を除去
             let result = modelName.substring(0, modelName.lastIndexOf(".")).replace(/_\d+$/, "");
-            let addIndexPath = tPath + "\\" + result + ".index";
-            let totalFeaPath = tPath + "\\" + result + ".npy";
+            let addIndexPath = iPath + "\\" + result + ".index";
+            let totalFeaPath = iPath + "\\" + result + ".npy";
             addedIndexTextareas.forEach((element) => {
                 element.value = addIndexPath;
                 //Gradioに変更したことを認識させる
