@@ -242,11 +242,7 @@
         if (iPath.slice(-1) == "\\") {
             iPath = iPath.slice(0, -1);
         }
-        //拡張子と末尾の数字を除去
-        if (modelName.lastIndexOf(".pth") > 0) {
-            modelName = modelName.substring(0, modelName.lastIndexOf(".pth"));
-        }
-        modelName = modelName.replace(/_\d+$/, "");
+        modelName = indexNameFromModelName(modelName);
         if (modelName.length > 0) {
             let addIndexPath = iPath + "\\" + modelName + ".index";
             let totalFeaPath = iPath + "\\" + modelName + ".npy";
@@ -425,7 +421,15 @@
         view.insertBefore(pane, null);
         return textarea;
     }
-
+    
+    function indexNameFromModelName(modelName) {
+        //拡張子と末尾の数字を除去
+        if (modelName.lastIndexOf(".pth") > 0) {
+            modelName = modelName.substring(0, modelName.lastIndexOf(".pth"));
+        }
+        modelName = modelName.replace(/_\d+$/, "");
+        return modelName;
+    }
 
 })();
 
