@@ -142,6 +142,8 @@
     }
 
     //特徴量ファイルパス
+    const gIndexSelect = document.createElement('select');
+    gIndexSelect.style = "width:20px;border-width:0px;padding:2px 22px;";
     const addedIndexTextareas = new Array();
     const totalFeaTextareas = new Array();
     function setupIndexPath(){
@@ -232,6 +234,32 @@
             observer2.observe(slct, options);
 
         }
+        // manual index select
+        // updateIndexSelect();
+        // gIndexSelect.addEventListener('change', function (evt) {
+        //     let val = evt.target.value;
+        //     if (val == "") {
+        //         updateIndexSelect();
+        //     } else if (val && val.length > 0) {
+        //         updateIndexPath(val);
+        //     }
+        //     gIndexSelect.selectedIndex = -1;
+        // });
+        // addedIndexTextareas[0].parentNode.insertBefore(gIndexSelect, addedIndexTextareas[0]);
+    }
+    function updateIndexSelect(){
+        gIndexSelect.replaceChildren();
+
+        var option = document.createElement("option");
+        option.text = "test";
+        option.value = "test";
+        gIndexSelect.appendChild(option);
+
+        var option = document.createElement("option");
+        option.text = "Reload";
+        option.value = "";
+        gIndexSelect.appendChild(option);
+        gIndexSelect.selectedIndex = -1;
     }
     function updateIndexPath(modelName) {
         // console.log("model selection changed");
@@ -421,7 +449,7 @@
         view.insertBefore(pane, null);
         return textarea;
     }
-    
+
     function indexNameFromModelName(modelName) {
         //拡張子と末尾の数字を除去
         if (modelName.lastIndexOf(".pth") > 0) {
