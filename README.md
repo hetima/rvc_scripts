@@ -1,11 +1,3 @@
-# rvc_jp_translate
-
-RVC(Retrieval-based-Voice-Conversion)のWebUIを日本語ローカライズするTampermonkeyスクリプトです。RVC本体ファイルには手を加えずにローカライズします。
-
-**20230416updated 以降を適用している場合、標準でローカライズされるのでこのスクリプトは不要です。**
-
-Tampermonkey機能拡張を使用している状態で [rvc_jp_translate.user.js](https://github.com/hetima/rvc_jp_translate/raw/main/rvc_jp_translate.user.js) を開くとインストールできます。
-
 
 # rvc_tweaks
 
@@ -25,3 +17,13 @@ Tampermonkey機能拡張を使用している状態で [rvc_tweaks.user.js](http
 この機能をオフにしたい場合はパス設定を空白にしてください。
 
 手動選択機能も追加しました。別モデルの特徴量ファイルで推論する手順が簡略になります。indexを設定するテキストエリアの上にポップアップが表示されます。特徴量ファイルが存在するかどうかはチェックせずモデル名基準でリストされるのでご注意ください。
+
+
+# ~~rvc_jp_translate~~
+
+RVC(Retrieval-based-Voice-Conversion)のWebUIを日本語ローカライズするTampermonkeyスクリプトです。RVC本体ファイルには手を加えずにローカライズします。
+
+**20230416updated 以降を適用している場合、標準でローカライズされるのでこのスクリプトは不要です。**
+
+Tampermonkey機能拡張を使用している状態で [rvc_jp_translate.user.js](https://github.com/hetima/rvc_jp_translate/raw/main/rvc_jp_translate.user.js) を開くとインストールできます。
+
