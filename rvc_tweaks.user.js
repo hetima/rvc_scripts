@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.4.1
+// @version      0.4.2
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.4.2 RVC20230428対応
 // 0.4.1 最近使った音源履歴 8個→16個
 // 0.4.0 特徴量ファイルの手動選択
 // 0.3.3 RVC20230416対応
@@ -161,12 +162,11 @@
                     textareaCount++;
                 } else if (itm.value.indexOf("total_fea.npy") != -1) {
                     totalFeaTextareas.push(itm);
-                    textareaCount++;
                 }
             });
         }
         //rvc-webui
-        if (textareaCount < 4){
+        if (textareaCount < 2){
             elementList = gAppRoot.querySelectorAll("span");
             textareaCount = 0;
             if (elementList.length > 0) {
