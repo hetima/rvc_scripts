@@ -230,7 +230,6 @@
         }
         
         if (slct && slct.type == "select-one"){
-            console.log(slct);
             slct.addEventListener('change', function (evt) {
                 updateIndexPath(evt.target.value);
             });
