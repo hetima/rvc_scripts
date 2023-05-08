@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.4.2
+// @version      0.4.3
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.4.3 最新のddPn08対応
 // 0.4.2 RVC20230428対応
 // 0.4.1 最近使った音源履歴 8個→16個
 // 0.4.0 特徴量ファイルの手動選択
@@ -212,14 +213,28 @@
 
         //モデル選択したらパスを更新
         let slct = gAppRoot.querySelector(".tabitem>div>div>div>div>label>select");
+        //ddpn gradio==3.25.0
         if(slct==null){
             slct = gAppRoot.querySelector(".single-select"); //span
         }
-        if (slct && slct.type =="select-one"){
+        //ddpn gradio==3.28.3
+        if (slct==null){
+            const elementList = gAppRoot.querySelectorAll("span");
+            elementList.forEach(function (itm) {
+                if(itm.innerHTML == "Model"){
+                    if (slct == null) {
+                        slct = itm.nextElementSibling.querySelector("input");
+                    }
+                }
+            });
+        }
+        
+        if (slct && slct.type == "select-one"){
+            console.log(slct);
             slct.addEventListener('change', function (evt) {
                 updateIndexPath(evt.target.value);
             });
-        } else if (slct && slct.tagName == "SPAN") {
+        } else if (slct && slct.tagName == "SPAN") { //ddpn gradio==3.25.0
             if (slct.textContent != ""){
                 updateIndexPath(slct.textContent);
             }
@@ -234,8 +249,24 @@
                 characterData: true
             };
             observer2.observe(slct, options);
-
+        } else if (slct && slct.tagName == "INPUT") { //ddpn gradio==3.28.3
+            if (slct.value != "") {
+                updateIndexPath(slct.value);
+            }
+            const observer2 = new MutationObserver(records => {
+                const newName = records[0].target.value;
+                if(newName != ""){
+                    console.log(newName + " was selected");
+                    updateIndexPath(newName);
+                }
+            });
+            const options = {
+                attributes: true
+            };
+            observer2.observe(slct, options);
         }
+
+
         //manual index select
         updateIndexSelect();
         gIndexSelect.addEventListener('change', function (evt) {
