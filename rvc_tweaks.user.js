@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         rvc_tweaks
 // @namespace    http://tampermonkey.net/
-// @version      0.4.3
+// @version      0.4.4
 // @description  rvc_tweaks
 // @author       hetima
 // @match        http://127.0.0.1/
@@ -10,6 +10,7 @@
 // @run-at       document-end
 // ==/UserScript==
 
+// 0.4.4 最新のddPn08対応
 // 0.4.3 最新のddPn08対応
 // 0.4.2 RVC20230428対応
 // 0.4.1 最近使った音源履歴 8個→16個
@@ -190,7 +191,7 @@
             }
         }
 
-        if (textareaCount < 2) {
+        if (textareaCount < 1) {
             return;
         }
         // console.log("textareaCount=" + textareaCount);
